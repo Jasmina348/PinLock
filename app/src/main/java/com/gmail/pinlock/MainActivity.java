@@ -3,9 +3,11 @@ package com.gmail.pinlock;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 public class MainActivity extends Activity {
     private static final int REQUEST_CODE_CONFIRM_DEVICE_CREDENTIALS = 1;
@@ -17,11 +19,17 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
         if (!mKeyguardManager.isKeyguardSecure()) {
-            Toast.makeText(this,
-                    "Secure lock screen hasn't set up.\n"
-                            + "Go to 'Settings -> Security -> Screenlock' to set up a lock screen",
-                    Toast.LENGTH_LONG).show();
-            return;
+            new AlertDialog.Builder(this)
+            .setTitle("Lock Screen")
+                    .setMessage("Secure Lock Screen hasn't set up. To continue working with this app, please go to 'Setting ->Security ->Screenlock'and set a Lock Screen")
+                    .setNegativeButton("EXIT", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            System.exit(0);
+                        }
+                    })
+                    .setCancelable(BuildConfig.DEBUG)
+                    .show();
         }
         else {
             showAuthenticationScreen();
